@@ -16,4 +16,45 @@ You are now ready to start the real practical labs!
 
 
 
+=======================================================================================================
 
+Bootloader - TF-A and U-Boot
+
+Objectives: Set up serial communication, compile and install the
+U-Boot bootloader, use basic U-Boot commands, set up TFTP com-
+munication with the development workstation.
+As the bootloader is the first piece of software executed by a hardware platform, the installation
+procedure of the bootloader is very specific to the hardware platform. There are usually two
+cases:
+• The processor offers nothing to ease the installation of the bootloader, in which case the
+JTAG has to be used to initialize flash storage and write the bootloader code to flash.
+Detailed knowledge of the hardware is of course required to perform these operations.
+• The processor offers a monitor, implemented in ROM, and through which access to the
+memories is made easier.
+The STM32MP1 SoC, falls into the second category. The monitor integrated in the ROM reads
+the SD card to search for a valid bootloader (the boot mode is actually configurable via a few
+input pins). In case no bootloader is found, it will operate in a fallback mode, that will allow
+to use an external tool to reflash some executable through USB. Therefore, either by using an
+MMC/SD card or that fallback mode, we can start up an STM32MP1-based board without
+having anything installed on it.
+
+
+
+Setup
+Go to the $HOME/embedded-linux-labs/bootloader directory.
+
+Setting up serial communication with the board
+Plug the USB-A to micro USB-B cable on the Discovery board. There is only one micro USB
+port on the board, it is CN11, also named ST-LINK. This is a debug interface and exposes
+multiple debugging interfaces, including a serial interface. When plugged in your computer, a
+serial port should appear, /dev/ttyACM0.
+You can also see this device appear by looking at the output of sudo dmesg.
+To communicate with the board through the serial port, install a serial communication program,
+such as picocom:
+$ sudo apt install picocom
+If you run ls -l /dev/ttyACM0, you can also see that only root and users belonging to the
+dialout group have read and write access to the serial console. Therefore, you need to add your
+user to the dialout group:
+$ sudo adduser $USER dialout
+Important: for the group change to be effective, you have to reboot your computer (at least on
+Ubuntu 22.04) and log in again. A workaround is to run newgrp dialout, but it is not global.
